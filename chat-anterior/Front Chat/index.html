@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+<body>
+    <div class="header">
+        <h5>Chat Rooms</h5>
+        <a href="#" id="create-room" data-toggle="modal" data-target="#create-room-modal">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+    <ul class="rooms list-unstyled" id="room-list" data-bind="foreach: chatRooms">
+    </ul>
+
+    <div class="container">
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-2">Grupo</div>
+            <div class="col-4"><input type="text" id="groupInput" /></div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <input type="button" id="GroupButton" value="Group Message" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2">User</div>
+            <div class="col-4"><input type="text" id="userInput" /></div>
+        </div>
+        <div class="row">
+            <div class="col-2">Message</div>
+            <div class="col-4"><input type="text" id="messageInput" /></div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" id="uploadForm" name="uploadForm">
+            <label for="UploadedFile" class="custom-file-upload">
+                <i class="far fa-image"></i>
+            </label>       
+            <input type="hidden" name="RoomId" value="1" />
+            <input type="file" id="UploadedFile" name="File" accept=".jpg,.jpeg,.png">
+            <input type="submit" value="Stash the file!" />
+        </form>
+
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-6">
+                <input type="button" id="sendButton" value="Send Message" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <ul id="messagesList"></ul>
+        </div>
+    </div>
+
+    <script src="lib/jquery/dist/jquery.min.js"></script>
+    <script src="lib/knockout/knockout-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.0/signalr.min.js"></script>
+    <script src="js/site.js"></script>
+    <script src="js/signalr2/chat3.js"></script>
+</body>
+</html>
