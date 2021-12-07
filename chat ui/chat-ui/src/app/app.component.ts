@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild } from '@angular/core';
 import { FormBuilder ,FormGroup , Validators } from '@angular/forms';
 import { SignalrService } from './signalr.service';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -9,14 +10,16 @@ import { SignalrService } from './signalr.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  @ViewChild('myinputfile')myinputfile:any;
+
   title = 'chat-ui';
   listMensajes : any[]=[];
   messages: string[] = [];
   message: string = "";
   usuario: string = "";
-
+  currentFiles:any=[];
   
-  constructor(public signalrService: SignalrService){
+  constructor(public signalrService: SignalrService,private http:HttpClient){
 
   }
   
@@ -43,16 +46,37 @@ export class AppComponent {
   }
 
   sendMessage(){
-    console.log("mensaje" + this.message);
-      this.signalrService.hubConnection.invoke("SendMessageGroup","1", this.usuario,this.message,0)
-      .catch(function (err) {
-        return console.error(err.toString());
-      });      
+    if(this.myinputfile.nativeElement.files.length>0){
+      let formData=new FormData();
+
+      formData.append("RoomId","1");
+      formData.append("File",this.myinputfile.nativeElement.files[0]);
+
+      this.http.post("MIURL_CONTROLADOR",formData).subscribe((response)=>{
+        console.log(response);
+      });
+
+    }else{
+      console.log("mensaje" + this.message);
+        this.signalrService.hubConnection.invoke("SendMessageGroup","1", this.usuario,this.message,0)
+        .catch(function (err) {
+          return console.error(err.toString());
+        });      
+    }
   }
 
   listadoMensajes(){
 
   }
 
+  onaddremoveFiles(){
+    if(this.myinputfile.nativeElement.files.length==0){
+      this.myinputfile.nativeElement.click();
+    }else{
+      this.myinputfile.nativeElement.value="";
+    }
+  }
+
+  onfilesSelected(files:any){return files.length>0;}
 
 }

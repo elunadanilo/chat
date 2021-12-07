@@ -342,13 +342,14 @@
           </div>
             <div class="input-group">
               <div class="input-group-prepend">
-                <button class="msg_img_btn" type="button">
-                  <i class="fa fa-paperclip" aria-hidden="true"></i>
+                <button [ngClass]="onfilesSelected(myinputfile.files)?'btn btn-primary':'btn btn-dark'" type="button" (click)="onaddremoveFiles()" >
+                  <i [ngClass]="onfilesSelected(myinputfile.files)?'fa fa-remove':'fa fa-paperclip'" aria-hidden="true"></i>
+                  <input type="file" hidden id="attach_file" [ngModel]="currentFiles" accept=".jpg,.jpeg,.png"  #myinputfile>
                 </button>
               </div>
-              <input type="text" class="form-control msg_txt" placeholder="Enviar mensaje..." [(ngModel)]="message" />
+              <input type="text" class="form-control msg_txt" [disabled]="onfilesSelected(myinputfile.files)" placeholder="Enviar mensaje..." [(ngModel)]="message" />
               <div class="input-group-append">
-                <button class="msg_send_btn" type="button" (click)="sendMessage()">
+                <button class="btn btn-dark" type="button" (click)="sendMessage()">
                   <i class="fa fa-paper-plane" aria-hidden="true"></i>
                 </button>
               </div>
