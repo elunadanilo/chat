@@ -18,6 +18,7 @@ export class AppComponent {
   message: string = "";
   usuario: string = "";
   currentFiles:any=[];
+  myimg:any="";
   
   constructor(public signalrService: SignalrService,private http:HttpClient){
 
@@ -52,8 +53,10 @@ export class AppComponent {
       formData.append("RoomId","1");
       formData.append("File",this.myinputfile.nativeElement.files[0]);
 
-      this.http.post("MIURL_CONTROLADOR",formData).subscribe((response)=>{
-        console.log(response);
+      this.http.post("http://localhost:54631/api/test",formData).subscribe((response)=>{
+        this.myimg=response;
+      },(error)=>{
+        console.log(error);
       });
 
     }else{
