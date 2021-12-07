@@ -239,43 +239,6 @@
   }
 </style>
 
-
-<!--<mat-grid-list cols="1">
-  <mat-grid-tile>
-    <mat-card>
-      <mat-list>
-        <mat-list-item *ngFor="let mensajes of listMensajes">
-          <mat-card>
-            <img matListAvatar src="..." alt="...">
-            <h3 matLine> {{mensajes.user}} </h3>
-            <p matLine>
-              <span> {{mensajes.fecha}} </span>
-              <span> {{mensajes.mensaje}} </span>
-            </p>
-          </mat-card>
-        </mat-list-item>
-      </mat-list>
-    </mat-card>
-  </mat-grid-tile>
-</mat-grid-list>
-
-
-
-<mat-form-field class="example-full-width" appearance="fill">
-  <mat-label>Enviar Mensaje...</mat-label>
-  <input matInput>
-</mat-form-field>
-<div class="example-button-container">
-  <button mat-fab color="primary" aria-label="Example icon button with a delete icon" (click)="enviarMensaje()">
-    <mat-icon>send</mat-icon>
-  </button>
-</div>
-
-
-<button mat-raised-button (click)="agregarSala()">
-  <i class="fa fa-database"></i>&nbsp; Entrar a Sala
-</button>-->
-
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
   integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css"
@@ -310,19 +273,18 @@
           <div class="msg_history">
             <li class="message" *ngFor="let message of listMensajes">
               <div *ngIf="
-              message.mensaje.idCliente == 0 then incoming_msg;
+              message.mensaje.idCliente == 0 && message.tipo == 'texto' then incoming_msg;
               else outgoing_msg"></div>
-             
               <ng-template #incoming_msg>
                 <div class="incoming_msg">
                   <div class="incoming_msg_img">
                     <img src="https://i.imgur.com/k2PZLZa.png" alt="User avatar" />
                   </div>
                   <div class="received_msg">
-                    <div class="received_withd_msg">
+                    <div class="received_withd_msg">                      
+                      <p>{{message.tipo}}</p>
                       <p>{{message.mensaje.fInsert}}</p>
                       <p>{{message.mensaje.texto}} </p>
-                      
                     </div>
                   </div>
                 </div>
@@ -333,27 +295,54 @@
                     <img src="https://i.imgur.com/k2PZLZa.png" alt="User avatar" />
                   </div>
                   <div class="sent_msg">
+                    <p>{{message.tipo}}</p>
                     <p>{{message.mensaje.fInsert}}</p>
                     <p>{{message.mensaje.texto}} </p>
                   </div>
                 </div>
               </ng-template>
+              <ng-template #incoming_img_msg>
+                <div class="incoming_msg">
+                  <div class="incoming_msg_img">
+                    <img />
+                  </div>
+                  <div class="received_msg">
+                    <div class="received_withd_msg">
+                      <p><img src="{{message.mensaje}}"></p>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template #outgoing_img_msg>
+                <div class="outgoing_msg">
+                  <div class="incoming_msg_img">
+                    <img />
+                  </div>
+                  <div class="sent_msg">
+                    <p><img src="{{message.mensaje}}"></p>
+                  </div>
+                </div>
+              </ng-template>
             </li>
           </div>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <button [ngClass]="onfilesSelected(myinputfile.files)?'btn btn-primary':'btn btn-dark'" type="button" (click)="onaddremoveFiles()" >
-                  <i [ngClass]="onfilesSelected(myinputfile.files)?'fa fa-remove':'fa fa-paperclip'" aria-hidden="true"></i>
-                  <input type="file" hidden id="attach_file" [ngModel]="currentFiles" accept=".jpg,.jpeg,.png"  #myinputfile>
-                </button>
-              </div>
-              <input type="text" class="form-control msg_txt" [disabled]="onfilesSelected(myinputfile.files)" placeholder="Enviar mensaje..." [(ngModel)]="message" />
-              <div class="input-group-append">
-                <button class="btn btn-dark" type="button" (click)="sendMessage()">
-                  <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                </button>
-              </div>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button [ngClass]="onfilesSelected(myinputfile.files)?'btn btn-primary':'btn btn-dark'" type="button"
+                (click)="onaddremoveFiles()">
+                <i [ngClass]="onfilesSelected(myinputfile.files)?'fa fa-remove':'fa fa-paperclip'"
+                  aria-hidden="true"></i>
+                <input type="file" hidden id="attach_file" [ngModel]="currentFiles" accept=".jpg,.jpeg,.png"
+                  #myinputfile>
+              </button>
             </div>
+            <input type="text" class="form-control msg_txt" [disabled]="onfilesSelected(myinputfile.files)"
+              placeholder="Enviar mensaje..." [(ngModel)]="message" />
+            <div class="input-group-append">
+              <button class="btn btn-dark" type="button" (click)="sendMessage()">
+                <i class="fa fa-paper-plane" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -363,16 +352,5 @@
 <div>
   <img [src]="myimg.img" alt="">
 </div>
-<div>
-  <form >      
-    <div>
-      <input type="file" name="profile"  />
-    </div>
-    <div>
-      <button type="submit">Upload</button>
-    </div>
-  </form>
-</div>
-
 
 <router-outlet></router-outlet>

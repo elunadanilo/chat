@@ -1,5 +1,6 @@
-import { Component, OnInit,ViewChild } from '@angular/core';
-import { FormBuilder ,FormGroup , Validators } from '@angular/forms';
+
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SignalrService } from './signalr.service';
 import { HttpClient } from '@angular/common/http';
 
@@ -10,76 +11,75 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  @ViewChild('myinputfile')myinputfile:any;
+  @ViewChild('myinputfile') myinputfile: any;
 
   title = 'chat-ui';
-  listMensajes : any[]=[];
+  listMensajes: any[] = [];
   messages: string[] = [];
   message: string = "";
   usuario: string = "";
-  currentFiles:any=[];
-  myimg:any="";
-  
-  constructor(public signalrService: SignalrService,private http:HttpClient){
+  currentFiles: any = [];
+  myimg: any = "";
+
+  constructor(public signalrService: SignalrService, private http: HttpClient) {
 
   }
-  
-  ngOnInit(): void {   
+
+  ngOnInit(): void {
     this.signalrService.startConnection();
 
     this.signalrService.hubConnection.on("ReceiveConnID", function (connid) {
       console.log("ConnID: " + connid);
     });
 
-    this.signalrService.hubConnection.on("ReceiveMessageGroup",  (user, message) => {    
-    console.log(`${user} says ${message}`)
-     this.listMensajes.push({mensaje: message, user: user})
-     console.log(this.listMensajes);
-    });  
+    this.signalrService.hubConnection.on("ReceiveMessageGroup", (user, message) => {
+      console.log(`${user} says ${message}`)
+      this.listMensajes.push({ mensaje: message, user: user, tipo: "texto" })
+      console.log(this.listMensajes);
+    });
 
-     
-   
+    this.signalrService.hubConnection.on("ReceiveImageMessageGroup", (user, image) => {
+      console.log(image);
+      this.myimg = image;
+      this.listMensajes.push({ mensaje: image.img, user: user, tipo: "imagen" })
+    });
   }
 
-  agregarSala(){
+  agregarSala() {
     console.log('Entro a sala');
-    this.signalrService.hubConnection.invoke("AddToGroup","1");
+    this.signalrService.hubConnection.invoke("AddToGroup", "1");
   }
 
-  sendMessage(){
-    if(this.myinputfile.nativeElement.files.length>0){
-      let formData=new FormData();
+  sendMessage() {
+    if (this.myinputfile.nativeElement.files.length > 0) {
+      let formData = new FormData();
 
-      formData.append("RoomId","1");
-      formData.append("File",this.myinputfile.nativeElement.files[0]);
+      formData.append("RoomId", "1");
+      formData.append("File", this.myinputfile.nativeElement.files[0]);
 
-      this.http.post("http://localhost:54631/api/test",formData).subscribe((response)=>{
-        this.myimg=response;
-      },(error)=>{
+      this.http.post("https://localhost:44352/UploadImages", formData).subscribe((response) => {
+        //this.myimg=response;
+      }, (error) => {
         console.log(error);
       });
 
-    }else{
-      console.log("mensaje" + this.message);
-        this.signalrService.hubConnection.invoke("SendMessageGroup","1", this.usuario,this.message,0)
+    } else {
+      //console.log("mensaje" + this.message);
+      this.signalrService.hubConnection.invoke("SendMessageGroup", "1", this.usuario, this.message, 0)
         .catch(function (err) {
           return console.error(err.toString());
-        });      
+        });
     }
   }
 
-  listadoMensajes(){
-
-  }
-
-  onaddremoveFiles(){
-    if(this.myinputfile.nativeElement.files.length==0){
+  onaddremoveFiles() {
+    if (this.myinputfile.nativeElement.files.length == 0) {
       this.myinputfile.nativeElement.click();
-    }else{
-      this.myinputfile.nativeElement.value="";
+    } else {
+      this.myinputfile.nativeElement.value = "";
     }
   }
 
-  onfilesSelected(files:any){return files.length>0;}
-
+  onfilesSelected(files: any) { return files.length > 0; }
 }
+
