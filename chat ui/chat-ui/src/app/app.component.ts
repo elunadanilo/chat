@@ -18,6 +18,7 @@ export class AppComponent {
   messages: string[] = [];
   message: string = "";
   usuario: string = "";
+  ticket: string = "";
   currentFiles: any = [];
   myimg: any = "";
 
@@ -40,14 +41,16 @@ export class AppComponent {
 
     this.signalrService.hubConnection.on("ReceiveImageMessageGroup", (user, image) => {
       console.log(image);
-      this.myimg = image;
-      this.listMensajes.push({ mensaje: image.img, user: user, tipo: "imagen" })
+      console.log(image.idUsuario);
+      console.log(image.idCliente);
+      //this.myimg = image;
+      this.listMensajes.push({ mensaje: image, user: user, tipo: "imagen" })
     });
   }
 
   agregarSala() {
     console.log('Entro a sala');
-    this.signalrService.hubConnection.invoke("AddToGroup", "1");
+    this.signalrService.hubConnection.invoke("AddToGroup", this.ticket);
   }
 
   sendMessage() {
@@ -55,6 +58,8 @@ export class AppComponent {
       let formData = new FormData();
 
       formData.append("RoomId", "1");
+      formData.append("IdUsuario", this.usuario);
+      formData.append("IdCliente", "1");
       formData.append("File", this.myinputfile.nativeElement.files[0]);
 
       this.http.post("https://localhost:44352/UploadImages", formData).subscribe((response) => {
@@ -81,5 +86,6 @@ export class AppComponent {
   }
 
   onfilesSelected(files: any) { return files.length > 0; }
+
 }
 
