@@ -29,8 +29,8 @@ export class SignalrService {
         console.log("Connection Started...");
       })
       .catch(err => {
-        /*console.log("Error while starting connection: " + err);
-        setTimeout(() => {
+        console.log("Error while starting connection: " + err);
+        /*setTimeout(() => {
           this.startConnection();
         }, 3000);*/
       });

@@ -43,11 +43,8 @@ export class AppComponent {
       console.log(image);
       console.log(image.idUsuario);
       console.log(image.idCliente);
-      //this.myimg = image;
       this.listMensajes.push({ mensaje: image, user: user, tipo: "imagen" })
     });
-
-    //this.signalrService.hubConnection.keepAliveIntervalInMilliseconds.toPrecision()
   }
 
   agregarSala() {
@@ -62,6 +59,7 @@ export class AppComponent {
       formData.append("RoomId", "1");
       formData.append("IdUsuario", this.usuario);
       formData.append("IdCliente", "1");
+      formData.append("Interno", "1");
       formData.append("File", this.myinputfile.nativeElement.files[0]);
 
       this.http.post("https://localhost:44352/UploadImages", formData).subscribe((response) => {
@@ -71,8 +69,7 @@ export class AppComponent {
       });
 
     } else {
-      //console.log("mensaje" + this.message);
-      this.signalrService.hubConnection.invoke("SendMessageGroup", "1", this.usuario, this.message, 0)
+      this.signalrService.hubConnection.invoke("SendMessageGroup", this.ticket, this.usuario, this.message, 0)
         .catch(function (err) {
           return console.error(err.toString());
         });
