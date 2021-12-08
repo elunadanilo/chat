@@ -46,6 +46,8 @@ export class AppComponent {
       //this.myimg = image;
       this.listMensajes.push({ mensaje: image, user: user, tipo: "imagen" })
     });
+
+    this.signalrService.hubConnection.keepAliveIntervalInMilliseconds.toPrecision()
   }
 
   agregarSala() {
