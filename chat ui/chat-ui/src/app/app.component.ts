@@ -1,7 +1,8 @@
 import { Component, OnInit,ViewChild } from '@angular/core';
 import { FormBuilder ,FormGroup , Validators } from '@angular/forms';
-import { SignalrService } from './signalr.service';
+import { SignalrService } from '../services/signalr.service';
 import { HttpClient } from '@angular/common/http';
+import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
 
 
 @Component({
@@ -25,20 +26,11 @@ export class AppComponent {
   }
   
   ngOnInit(): void {   
-    this.signalrService.startConnection();
-
-    this.signalrService.hubConnection.on("ReceiveConnID", function (connid) {
-      console.log("ConnID: " + connid);
-    });
-
-    this.signalrService.hubConnection.on("ReceiveMessageGroup",  (user, message) => {    
-    console.log(`${user} says ${message}`)
-     this.listMensajes.push({mensaje: message, user: user})
-     console.log(this.listMensajes);
-    });  
-
-     
-   
+    this.signalrService.startConnection((message:any)=>{
+      this.listMensajes.push(message);
+    },(imageMessage:any)=>{
+      this.listMensajes.push(imageMessage);
+    }); 
   }
 
   agregarSala(){
@@ -46,25 +38,23 @@ export class AppComponent {
     this.signalrService.hubConnection.invoke("AddToGroup","1");
   }
 
-  sendMessage(){
+  async sendMessage(){
     if(this.myinputfile.nativeElement.files.length>0){
       let formData=new FormData();
 
       formData.append("RoomId","1");
       formData.append("File",this.myinputfile.nativeElement.files[0]);
 
-      this.http.post("http://localhost:54631/api/test",formData).subscribe((response)=>{
+      await this.signalrService.sendImagesMessage(formData,(response:any)=>{
         this.myimg=response;
-      },(error)=>{
+      },(error:any)=>{
         console.log(error);
       });
 
+      this.myinputfile.nativeElement.value="";
     }else{
       console.log("mensaje" + this.message);
-        this.signalrService.hubConnection.invoke("SendMessageGroup","1", this.usuario,this.message,0)
-        .catch(function (err) {
-          return console.error(err.toString());
-        });      
+      this.signalrService.sendMessageGroup(this.usuario,this.message);
     }
   }
 
