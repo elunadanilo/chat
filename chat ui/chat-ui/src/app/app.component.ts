@@ -1,3 +1,4 @@
+
 import { Component, OnInit,ViewChild } from '@angular/core';
 import { FormBuilder ,FormGroup , Validators } from '@angular/forms';
 import { SignalrService } from '../services/signalr.service';
@@ -11,17 +12,18 @@ import { i18nMetaToJSDoc } from '@angular/compiler/src/render3/view/i18n/meta';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  @ViewChild('myinputfile')myinputfile:any;
+  @ViewChild('myinputfile') myinputfile: any;
 
   title = 'chat-ui';
-  listMensajes : any[]=[];
+  listMensajes: any[] = [];
   messages: string[] = [];
   message: string = "";
   usuario: string = "";
-  currentFiles:any=[];
-  myimg:any="";
-  
-  constructor(public signalrService: SignalrService,private http:HttpClient){
+  ticket: string = "";
+  currentFiles: any = [];
+  myimg: any = "";
+
+  constructor(public signalrService: SignalrService, private http: HttpClient) {
 
   }
   
@@ -33,17 +35,20 @@ export class AppComponent {
     }); 
   }
 
-  agregarSala(){
+  agregarSala() {
     console.log('Entro a sala');
-    this.signalrService.hubConnection.invoke("AddToGroup","1");
+    this.signalrService.hubConnection.invoke("AddToGroup", this.ticket);
   }
 
   async sendMessage(){
     if(this.myinputfile.nativeElement.files.length>0){
       let formData=new FormData();
 
-      formData.append("RoomId","1");
-      formData.append("File",this.myinputfile.nativeElement.files[0]);
+      formData.append("RoomId", "1");
+      formData.append("IdUsuario", this.usuario);
+      formData.append("IdCliente", "1");
+      formData.append("Interno", "1");
+      formData.append("File", this.myinputfile.nativeElement.files[0]);
 
       await this.signalrService.sendImagesMessage(formData,(response:any)=>{
         this.myimg=response;
@@ -58,18 +63,15 @@ export class AppComponent {
     }
   }
 
-  listadoMensajes(){
-
-  }
-
-  onaddremoveFiles(){
-    if(this.myinputfile.nativeElement.files.length==0){
+  onaddremoveFiles() {
+    if (this.myinputfile.nativeElement.files.length == 0) {
       this.myinputfile.nativeElement.click();
-    }else{
-      this.myinputfile.nativeElement.value="";
+    } else {
+      this.myinputfile.nativeElement.value = "";
     }
   }
 
-  onfilesSelected(files:any){return files.length>0;}
+  onfilesSelected(files: any) { return files.length > 0; }
 
 }
+
