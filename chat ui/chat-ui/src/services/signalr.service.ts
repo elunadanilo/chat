@@ -20,7 +20,21 @@ export class SignalrService {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
       })
-      .withAutomaticReconnect([0,1000,5000,6000,7000,8000,10000,15000])
+      //.withAutomaticReconnect([0,1000,5000,6000,7000,8000,10000,15000])
+      .withAutomaticReconnect({
+        nextRetryDelayInMilliseconds: retryContext => {
+            if (retryContext.elapsedMilliseconds < 60000) {
+                // If we've been reconnecting for less than 60 seconds so far,
+                // wait between 0 and 10 seconds before the next reconnect attempt.
+                //this.hubConnection.invoke("AddToGroup", this.ticket, this.usuario);
+
+                return Math.random() * 10000;
+            } else {
+                // If we've been reconnecting for more than 60 seconds so far, stop reconnecting.
+                return null;
+            }
+        }
+    })
       .build();
   };
 
@@ -50,7 +64,11 @@ export class SignalrService {
       console.log("ConnID: " + connid);
     });
   }
-
+  
+  public addTogroup(room: any,user:any){
+    this.hubConnection.invoke("AddToGroup", room, user);
+  }
+  
   public sendMessageGroup(room: any,user:any,message:any){
     this.hubConnection.invoke("SendMessageGroup",room, user,message,0)
     .catch(function (err) {

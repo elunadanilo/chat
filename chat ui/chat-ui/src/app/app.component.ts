@@ -40,7 +40,7 @@ export class AppComponent {
 
   agregarSala() {
     console.log('Entro a sala');
-    this.signalrService.hubConnection.invoke("AddToGroup", this.ticket, this.usuario);
+    this.signalrService.addTogroup(this.ticket, this.usuario);
   }
 
   async sendMessage() {
