@@ -20,10 +20,14 @@ export class SignalrService {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
       })
+      .withAutomaticReconnect([0,1000,5000,6000,7000,8000,10000,15000])
       .build();
   };
 
-  public startConnection = (onMessageCallback:Function,onMessageImageCallback:Function) => {
+  public startConnection = (
+    onMessageCallback:Function,
+    onMessageImageCallback:Function, 
+    onIncomingConnectionCallback:Function) => {
     this.hubConnection
       .start()
       .then(() => {
@@ -31,6 +35,7 @@ export class SignalrService {
         this.ListeningConnections();
         this.ListeningIncomeMessages(onMessageCallback);
         this.ListeningIncomeImagesMessages(onMessageImageCallback);
+        this.ListeningIncomingConnection(onIncomingConnectionCallback);
       })
       .catch(err => {
         /*console.log("Error while starting connection: " + err);
@@ -44,12 +49,10 @@ export class SignalrService {
     this.hubConnection.on("ReceiveConnID", function (connid) {
       console.log("ConnID: " + connid);
     });
-
-
   }
 
-  public sendMessageGroup(user:any,message:any){
-    this.hubConnection.invoke("SendMessageGroup","1", user,message,0)
+  public sendMessageGroup(room: any,user:any,message:any){
+    this.hubConnection.invoke("SendMessageGroup",room, user,message,0)
     .catch(function (err) {
       return console.error(err.toString());
     });     
@@ -57,27 +60,40 @@ export class SignalrService {
 
   public ListeningIncomeMessages(onMessageCallback:Function){
     this.hubConnection.on("ReceiveMessageGroup",  (user, message) => {    
-      console.log(`${user} says ${message}`)
+      //console.log(`${user} says ${message}`)
+      onMessageCallback({mensaje: message, user: user});
+    });  
+  }
+
+  public ListeningIncomingConnection(onIncomingConnectionCallback:Function){
+    this.hubConnection.on("IncomingConnection",(message) => {    
+      onIncomingConnectionCallback({mensaje: message});
+    });  
+  }
+
+  public ListeningUserConnected(onMessageCallback:Function){
+    this.hubConnection.on("ReceiveMessageUserConnected",  (user, message) => {    
+      //console.log(`${user} says ${message}`)
       onMessageCallback({mensaje: message, user: user});
     });  
   }
 
   public ListeningIncomeImagesMessages(onImageMessageCallback:Function){
     this.hubConnection.on("ReceiveImageMessageGroup", (user, image) => {
-      console.log(image);
-      console.log(image.idUsuario);
-      console.log(image.idCliente);
+      //console.log(image);
+     // console.log(image.idUsuario);
+     // console.log(image.idCliente);
 
       onImageMessageCallback({ mensaje: image, user: user, tipo: "imagen" });
     });
   }
 
   public async sendImagesMessage(formData:FormData,onOkCallback:Function,onErroCallback:Function){
-    await this.http.post("http://localhost:54631/api/test",formData).toPromise().then((response)=>{
+    await this.http.post("https://localhost:44352/UploadImages",formData).toPromise().then((response)=>{
       onOkCallback(response);
     }).catch((error)=>{
       onErroCallback(error);
       console.log(error);
     });
-  }
+  }  
 }
