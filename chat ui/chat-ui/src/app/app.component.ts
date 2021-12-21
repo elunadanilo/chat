@@ -15,10 +15,10 @@ export class AppComponent {
   @ViewChild('myinputfile') myinputfile: any;
 
   title = 'chat-ui';
-  listMensajes: any[] = [];
+  listMessages: any[] = [];
   messages: string[] = [];
   message: string = "";
-  usuario: string = "";
+  user: string = "";
   ticket: string = "";
   currentFiles: any = [];
   myimg: any = "";
@@ -29,18 +29,18 @@ export class AppComponent {
 
   ngOnInit(): void {
     this.signalrService.startConnection((message: any) => {
-      this.listMensajes.push({ mensaje: message.mensaje, user: message.user, tipo: "texto" });
+      this.listMessages.push({ mensaje: message.mensaje, user: message.user, tipo: "texto" });
     }, (imageMessage: any) => {
-      console.log("mensaje de imagen: " + imageMessage);
-      this.listMensajes.push(imageMessage);
+      this.listMessages.push(imageMessage);
     }, (incomingConnection: any) => {
       console.log(incomingConnection);
+    }, (error:any) => {
+      console.log(error);
     });
   }
 
-  agregarSala() {
-    console.log('Entro a sala');
-    this.signalrService.addTogroup(this.ticket, this.usuario);
+  addRoom() {
+    this.signalrService.addTogroup(this.ticket, this.user);
   }
 
   async sendMessage() {
@@ -48,7 +48,7 @@ export class AppComponent {
       let formData = new FormData();
 
       formData.append("RoomId", this.ticket);
-      formData.append("IdUsuario", this.usuario);
+      formData.append("IdUsuario", this.user);
       formData.append("IdCliente", "1");
       formData.append("Interno", "1");
       formData.append("File", this.myinputfile.nativeElement.files[0]);
@@ -61,7 +61,7 @@ export class AppComponent {
 
       this.myinputfile.nativeElement.value = "";
     } else {
-      this.signalrService.sendMessageGroup(this.ticket, this.usuario, this.message);
+      this.signalrService.sendMessageGroup(this.ticket, this.user, this.message);
     }
   }
 

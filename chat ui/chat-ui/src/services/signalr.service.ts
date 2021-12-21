@@ -26,7 +26,6 @@ export class SignalrService {
             if (retryContext.elapsedMilliseconds < 60000) {
                 // If we've been reconnecting for less than 60 seconds so far,
                 // wait between 0 and 10 seconds before the next reconnect attempt.
-                //this.hubConnection.invoke("AddToGroup", this.ticket, this.usuario);
 
                 return Math.random() * 10000;
             } else {
@@ -41,7 +40,8 @@ export class SignalrService {
   public startConnection = (
     onMessageCallback:Function,
     onMessageImageCallback:Function, 
-    onIncomingConnectionCallback:Function) => {
+    onIncomingConnectionCallback:Function,
+    onErrorCallback:Function) => {
     this.hubConnection
       .start()
       .then(() => {
@@ -50,6 +50,7 @@ export class SignalrService {
         this.ListeningIncomeMessages(onMessageCallback);
         this.ListeningIncomeImagesMessages(onMessageImageCallback);
         this.ListeningIncomingConnection(onIncomingConnectionCallback);
+        this.ListeningError(onErrorCallback);
       })
       .catch(err => {
         /*console.log("Error while starting connection: " + err);
@@ -68,7 +69,7 @@ export class SignalrService {
   public addTogroup(room: any,user:any){
     this.hubConnection.invoke("AddToGroup", room, user);
   }
-  
+
   public sendMessageGroup(room: any,user:any,message:any){
     this.hubConnection.invoke("SendMessageGroup",room, user,message,0)
     .catch(function (err) {
@@ -78,7 +79,6 @@ export class SignalrService {
 
   public ListeningIncomeMessages(onMessageCallback:Function){
     this.hubConnection.on("ReceiveMessageGroup",  (user, message) => {    
-      //console.log(`${user} says ${message}`)
       onMessageCallback({mensaje: message, user: user});
     });  
   }
@@ -91,8 +91,13 @@ export class SignalrService {
 
   public ListeningUserConnected(onMessageCallback:Function){
     this.hubConnection.on("ReceiveMessageUserConnected",  (user, message) => {    
-      //console.log(`${user} says ${message}`)
       onMessageCallback({mensaje: message, user: user});
+    });  
+  }
+
+  public ListeningError(onErrorCallback:Function){
+    this.hubConnection.on("onError", (message) => {    
+      onErrorCallback({mensaje: message});
     });  
   }
 

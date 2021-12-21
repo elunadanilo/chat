@@ -20,8 +20,8 @@
                 <div class="chat_people">
                   <div class="chat_ib">
                     <div><input type="text" class="form-control" placeholder="Ticket" [(ngModel)]="ticket" /></div>
-                    <div><input type="text" class="form-control" placeholder="Usuario" [(ngModel)]="usuario" /></div>
-                    <div (click)="agregarSala()"><i class="fa fa-paper-plane"></i></div>
+                    <div><input type="text" class="form-control" placeholder="User" [(ngModel)]="user" /></div>
+                    <button type="button" (click)="addRoom()" class="btn btn-primary">Login</button>
                   </div>
                 </div>
               </div>
@@ -30,7 +30,7 @@
         </div>
         <div class="mesgs">
           <div class="msg_history">
-            <li class="message" *ngFor="let message of listMensajes">
+            <li class="message" *ngFor="let message of listMessages">
               <div *ngIf="message.mensaje.idCliente == 0 && message.tipo == 'texto' then incoming_msg;"></div>
               <ng-template #incoming_msg>
                 <div class="incoming_msg">
