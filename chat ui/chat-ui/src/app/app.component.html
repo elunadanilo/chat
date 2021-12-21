@@ -21,7 +21,7 @@
                   <div class="chat_ib">
                     <div><input type="text" class="form-control" placeholder="Ticket" [(ngModel)]="ticket" /></div>
                     <div><input type="text" class="form-control" placeholder="User" [(ngModel)]="user" /></div>
-                    <button type="button" (click)="addRoom()" class="btn btn-primary">Login</button>
+                    <div><button type="button" (click)="addRoom()" class="btn btn-primary">Login</button></div>
                   </div>
                 </div>
               </div>
@@ -41,7 +41,7 @@
                       </div>
                       <div>
                         <p style="color:#c4c4c4">{{message.mensaje.idTicket}} . {{message.mensaje.fInsert}}</p>
-                        <p style="font-size: 15px;">{{message.mensaje.texto}} </p>
+                        <p style="font-size: 15px;">{{message.mensaje.texto}}</p>
                       </div>
                     </div>
                   </div>
