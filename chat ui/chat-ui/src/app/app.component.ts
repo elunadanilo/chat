@@ -29,6 +29,7 @@ export class AppComponent {
 
   ngOnInit(): void {
     this.signalrService.startConnection((message: any) => {
+      console.log('recibiendo ' + message.mensaje);
       this.listMessages.push({ mensaje: message.mensaje, user: message.user, tipo: "texto" });
     }, (imageMessage: any) => {
       this.listMessages.push(imageMessage);
@@ -43,14 +44,20 @@ export class AppComponent {
     this.signalrService.addTogroup(this.ticket, this.user);
   }
 
+  leaveRoom(){
+    this.signalrService.leaveTogroup(this.ticket);
+  }
+
   async sendMessage() {
     if (this.myinputfile.nativeElement.files.length > 0) {
       let formData = new FormData();
 
       formData.append("RoomId", this.ticket);
       formData.append("IdUsuario", this.user);
-      formData.append("IdCliente", "1");
-      formData.append("Interno", "1");
+      formData.append("IdTipoRemitente", "1");
+      formData.append("Asunto", "Asunto");
+      formData.append("Mensaje", this.message);
+      formData.append("CodIdioma", "ES");
       formData.append("File", this.myinputfile.nativeElement.files[0]);
 
       await this.signalrService.sendImagesMessage(formData, (response: any) => {

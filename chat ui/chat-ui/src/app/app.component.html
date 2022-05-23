@@ -100,11 +100,11 @@
                 (click)="onaddremoveFiles()">
                 <i [ngClass]="onfilesSelected(myinputfile.files)?'fa fa-remove':'fa fa-paperclip'"
                   aria-hidden="true"></i>
-                <input type="file" hidden id="attach_file" [ngModel]="currentFiles" accept=".jpg,.jpeg,.png"
+                <input type="file" hidden id="attach_file" [ngModel]="currentFiles" accept=".jpg,.jpeg,.png,.bmp,.pdf,.docx,.doc,.xlsx,.xls"
                   #myinputfile>
               </button>
             </div>
-            <input type="text" class="form-control msg_txt" [disabled]="onfilesSelected(myinputfile.files)"
+            <input type="text" maxlength="524288" class="form-control msg_txt" [disabled]="onfilesSelected(myinputfile.files)"
               placeholder="Enviar mensaje..." [(ngModel)]="message" />
             <div class="input-group-append">
               <button class="btn btn-dark" type="button" (click)="sendMessage()">
